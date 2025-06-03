@@ -1,0 +1,45 @@
+<!Index html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Bedrock Chatbot</title>
+</head>
+<body>
+  <h1>🧠 Bedrock Chatbot</h1>
+
+  <input type="text" id="userInput" placeholder="Say something..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <p id="botReply"></p>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('userInput').value.trim();
+      const replyEl = document.getElementById('botReply');
+
+      if (!input) {
+        replyEl.textContent = "Please enter a message.";
+        return;
+      }
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_input: input })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        replyEl.textContent = `Bot: ${data.reply}`;
+      } catch (error) {
+        replyEl.textContent = "Bot: Something went wrong. Try again.";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
